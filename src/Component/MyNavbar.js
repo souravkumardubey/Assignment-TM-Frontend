@@ -3,7 +3,6 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Login from "./Login";
 import {login,register} from "../Network";
-import {findDOMNode} from "react-dom";
 
 export default function MyNavbar({reRender}) {
     const [showLogin,setShowLogin] = useState(false);
