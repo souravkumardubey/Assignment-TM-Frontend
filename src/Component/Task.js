@@ -2,19 +2,35 @@ import React,{useState} from "react";
 import Card from 'react-bootstrap/Card';
 import './Task.css'
 import TaskModal from "./TaskModal";
-export default function Task({taskObj}) {
+import {editTask,deleteTask} from "../Network";
+
+export default function Task({taskObj,update,del}) {
     const [show,setShow] = useState(false);
     function getColor(){
-        if(taskObj.status === 1)return "#ff0000";
-        else if(taskObj.status === 2)return "#ffca22";
-        else if(taskObj.status === 3)return "#0e933f";
+        if(Number(taskObj.status) === 1)return "#ff0000";
+        else if(Number(taskObj.status) === 2)return "#ffca22";
+        else if(Number(taskObj.status) === 3)return "#0e933f";
     }
 
+    function onUpdate(task){
+        setShow(false);
+        editTask(task)
+            .then((id)=>{
+                if(id !== undefined)update(task);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
+    }
     function onDelete(){
-
-    }
-    function onUpdate(){
-
+        setShow(false);
+        deleteTask(taskObj)
+            .then((id)=>{
+                if(id !== undefined)del(id);
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
     }
 
     function onShow(){
@@ -22,7 +38,7 @@ export default function Task({taskObj}) {
     }
     return (
         <>
-            <Card className={"mb-2 bg-dark-subtle"} onClick={onShow}>
+            <Card className={"ch mb-2 bg-dark-subtle"} onClick={onShow}>
                 <div style={{display:"flex"}} className={"mt-2 ms-2"}>
                     <span className={"dot mt-1 ms-1 me-2"} style={{backgroundColor:getColor()}}/>
                     <Card.Title>{taskObj.title}</Card.Title>

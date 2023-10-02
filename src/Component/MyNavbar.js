@@ -1,11 +1,43 @@
 import React, {useState} from "react";
-import ReactDOM from "react-dom/client";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Login from "./Login";
+import {login,register} from "../Network";
+import {findDOMNode} from "react-dom";
 
-export default function MyNavbar() {
-    const [show,setShow] = useState(false);
+export default function MyNavbar({reRender}) {
+    const [showLogin,setShowLogin] = useState(false);
+    const [showRegister,setShowRegister] = useState(false);
+    function onLogin(username,password){
+        setShowLogin(false);
+        login(username,password).then((loggedIn)=>{
+            reRender();
+            if(!loggedIn)alert("Invalid Username or password")
+        })
+    }
+    function onRegister(username,password){
+        setShowRegister(false);
+        register(username,password).then((loggedIn)=>{
+            reRender();
+            if(!loggedIn)alert("Invalid Username or password")
+        })
+    }
+    function logout(){
+        localStorage.clear();
+        reRender()
+    }
+    let buttons = (
+        <>
+            <a className={"text-light me-3"} onClick={()=>setShowLogin(true)} >Login</a>
+            <a className={"text-light"} onClick={()=>setShowRegister(true)}>Register</a>
+        </>
+    )
+    if(localStorage.getItem('ID') !== null)buttons = (
+        <>
+            <a className={"text-light me-3"}>{localStorage.getItem('username')}</a>
+            <a className={"text-light"} onClick={logout} >Logout</a>
+        </>
+    )
     return (
         <>
             <Navbar className={"bg-dark"}>
@@ -14,12 +46,14 @@ export default function MyNavbar() {
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
                         <Navbar.Text >
-                            <a className={"text-light"} onClick={()=>setShow(true)}>Login</a>
+                            {buttons}
                         </Navbar.Text>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <Login show={show} closeHandler={()=>setShow(false)}/>
+            <Login show={showLogin}  Handler={onLogin} closeHandler={()=>setShowLogin(false) }/>
+            <Login show={showRegister}  Handler={onRegister} register={true} closeHandler={()=>setShowRegister(false)}/>
+
         </>
 
     );
